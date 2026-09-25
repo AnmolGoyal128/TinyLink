@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.Map;
 
 @RestController
@@ -24,28 +25,12 @@ public class UrlShortenerController {
     private final RateLimitService rateLimitService;
 
     @PostMapping("/shorten")
-    public ResponseEntity<?> shortenUrl (@Valid @RequestBody ShortenUrlRequest request,
-                                         HttpServletRequest httpServletRequest){
+    public ResponseEntity<UrlMappingDto> shortenUrl (@Valid @RequestBody Map<String, String> request){
 
-        String clientsIp = getClientIp(httpServletRequest);
-        if(!rateLimitService.isAllowed(clientsIp)){
-            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body(Map.of());
-        }
+        // {"originalUrl" : "https
 
-        return null;
+        String OriginUrl = request.get("OriginUrl");
+        UrlShortenerService
     }
 
-    private String getClientIp(HttpServletRequest httpServletRequest) {
-        String XForwardFor = httpServletRequest.getHeader("X-Forwarded-For");
-        if(XForwardFor == null || XForwardFor.isEmpty()){
-            return httpServletRequest.getRemoteAddr();
-        }
 
-        String xRealip = httpServletRequest.getHeader("X-Real-IP");
-        if(xRealip == null || xRealip.isEmpty()){
-            return xRealip;
-        }
-
-        return httpServletRequest.getRemoteAddr();
-    }
-}
